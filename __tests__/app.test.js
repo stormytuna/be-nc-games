@@ -19,3 +19,24 @@ describe("404s correctly", () => {
 		return request(app).get("/api/totally-a-real-endpoint").expect(404);
 	});
 });
+
+describe("GET /api/categories", () => {
+	test("status:200, responds with a categories array", () => {
+		return request(app)
+			.get("/api/categories")
+			.expect(200)
+			.then(({ body }) => {
+				const { categories } = body;
+				expect(categories).toBeInstanceOf(Array);
+				expect(categories).toHaveLength(4);
+				categories.forEach((category) => {
+					expect(category).toEqual(
+						expect.objectContaining({
+							slug: expect.any(String),
+							description: expect.any(String)
+						})
+					);
+				});
+			});
+	});
+});
