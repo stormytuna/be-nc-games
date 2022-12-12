@@ -11,7 +11,7 @@ app.get("/api/categories", getCategories);
 
 // Error handling
 app.use(handle400s);
-app.use(handle404s);
+app.use("/*", handle404s);
 app.use(handle500s);
 
 module.exports = app;

@@ -16,7 +16,12 @@ afterAll(() => {
 
 describe("404s correctly", () => {
 	test("status:404, responds with an appropriate error message", () => {
-		return request(app).get("/api/totally-a-real-endpoint").expect(404);
+		return request(app)
+			.get("/api/totally-a-real-endpoint")
+			.expect(404)
+			.then(({ body }) => {
+				expect(body).toEqual({ msg: "Content not found" });
+			});
 	});
 });
 

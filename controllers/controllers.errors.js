@@ -2,8 +2,8 @@ exports.handle400s = (err, req, res, next) => {
 	next(err, req, res);
 };
 
-exports.handle404s = (err, req, res, next) => {
-	next(err, req, res);
+exports.handle404s = (req, res, next) => {
+	res.status(404).send({ msg: "Content not found" });
 };
 
 exports.handle500s = (err, req, res, next) => {
