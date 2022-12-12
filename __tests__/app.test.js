@@ -72,3 +72,25 @@ describe("GET /api/reviews", () => {
 			});
 	});
 });
+
+describe("GET /api/reviews/:review_id", () => {
+	test("status:200, responds with a review object", () => {
+		return request(app)
+			.get("/api/reviews/2")
+			.expect(200)
+			.then(({ body }) => {
+				const { review } = body;
+				expect(review).toEqual({
+					owner: "philippaclaire9",
+					title: "Jenga",
+					designer: "Leslie Scott",
+					review_id: 2,
+					category: "dexterity",
+					review_img_url: "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+					created_at: "2021-01-18T10:01:41.251Z",
+					votes: 5,
+					comment_count: "3"
+				});
+			});
+	});
+});
