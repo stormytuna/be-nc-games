@@ -94,7 +94,7 @@ describe("GET /api/reviews/:review_id", () => {
 			});
 	});
 
-	test("status:200, responds with an appropriate error message when provided review_id doesn't exist", () => {
+	test("status:404, responds with an appropriate error message when provided review_id doesn't exist", () => {
 		return request(app)
 			.get("/api/reviews/9999")
 			.expect(404)
