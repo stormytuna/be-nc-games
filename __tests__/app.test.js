@@ -53,13 +53,13 @@ describe("GET /api/reviews", () => {
 			.expect(200)
 			.then(({ body }) => {
 				const { reviews } = body;
-				expect(reviews).toBeInstanceOf(Array);
 				expect(reviews).toHaveLength(13);
 				reviews.forEach((review) => {
 					expect(review).toEqual(
 						expect.objectContaining({
 							owner: expect.any(String),
 							title: expect.any(String),
+							designer: expect.any(String),
 							review_id: expect.any(Number),
 							category: expect.any(String),
 							review_img_url: expect.any(String),
