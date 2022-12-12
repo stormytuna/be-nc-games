@@ -145,4 +145,14 @@ describe("GET /api/reviews/:review_id/comments", () => {
 				expect(msg).toBe("Content not found");
 			});
 	});
+
+	test("status:400, responds with an appropriate error message when provided review_id isn't an integer", () => {
+		return request(app)
+			.get("/api/reviews/totally-a-real-review-id/comments")
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
 });
