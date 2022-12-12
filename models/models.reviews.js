@@ -23,7 +23,14 @@ exports.selectReviewById = (reviewId) => {
     ORDER BY created_at DESC;
   `;
 	const params = [reviewId];
-	return db.query(query, params).then(({ rows: review }) => {
-		return review[0];
+	return db.query(query, params).then(({ rows: reviews }) => {
+		if (reviews.length === 0) {
+			return Promise.reject({
+				status: 404,
+				msg: "Content not found"
+			});
+		}
+
+		return reviews[0];
 	});
 };
