@@ -80,7 +80,7 @@ describe("GET /api/reviews/:review_id", () => {
 			.expect(200)
 			.then(({ body }) => {
 				const { review } = body;
-				expect(review).toEqual({
+				expect(review).toMatchObject({
 					owner: "philippaclaire9",
 					title: "Jenga",
 					designer: "Leslie Scott",
