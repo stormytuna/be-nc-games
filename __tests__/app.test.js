@@ -72,3 +72,45 @@ describe("GET /api/reviews", () => {
 			});
 	});
 });
+
+describe("GET /api/reviews/:review_id", () => {
+	test("status:200, responds with a review object", () => {
+		return request(app)
+			.get("/api/reviews/2")
+			.expect(200)
+			.then(({ body }) => {
+				const { review } = body;
+				expect(review).toMatchObject({
+					owner: "philippaclaire9",
+					title: "Jenga",
+					designer: "Leslie Scott",
+					review_id: 2,
+					category: "dexterity",
+					review_img_url: "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+					created_at: "2021-01-18T10:01:41.251Z",
+					votes: 5,
+					comment_count: "3"
+				});
+			});
+	});
+
+	test("status:404, responds with an appropriate error message when provided review_id doesn't exist", () => {
+		return request(app)
+			.get("/api/reviews/9999")
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
+
+	test("status:400, responds with an appropriate error message when provided review_id isn't an integer", () => {
+		return request(app)
+			.get("/api/reviews/totally-a-real-review-id")
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+});
