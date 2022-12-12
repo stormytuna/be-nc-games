@@ -9,6 +9,13 @@ exports.selectCommentsByReviewId = (reviewId) => {
   `;
 	const params = [reviewId];
 	return db.query(query, params).then(({ rows: comments }) => {
+		if (comments.length === 0) {
+			return Promise.reject({
+				status: 404,
+				msg: "Content not found"
+			});
+		}
+
 		return comments;
 	});
 };
