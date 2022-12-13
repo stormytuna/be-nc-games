@@ -35,9 +35,9 @@ exports.selectReviewById = (reviewId) => {
 	});
 };
 
-exports.updateReviewById = (newVotes, reviewId) => {
+exports.updateReviewById = ({ inc_votes: voteIncrement }, reviewId) => {
 	// Check for 204
-	if (newVotes.inc_votes === 0) {
+	if (voteIncrement === 0) {
 		return Promise.resolve();
 	}
 
@@ -50,7 +50,7 @@ exports.updateReviewById = (newVotes, reviewId) => {
       WHERE review_id = $1
       RETURNING *;
     `;
-			const params = [reviewId, newVotes.inc_votes];
+			const params = [reviewId, voteIncrement];
 			return db.query(query, params);
 		})
 		.then(({ rows: reviews }) => {
