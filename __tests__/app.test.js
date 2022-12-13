@@ -194,4 +194,34 @@ describe("POST /api/reviews/:review_id/comments", () => {
 				expect(msg).toBe("Content not found");
 			});
 	});
+
+	test("status:400, responds with an appropriate error message when sending a malformed body", () => {
+		const newComment = {
+			username: "mallionaire",
+			someKeyOtherThanBody: "very cool :)"
+		};
+		return request(app)
+			.post("/api/reviews/4/comments")
+			.send(newComment)
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+
+	test("status:400, responds with an appropriate error message when sending a body that fails schema validation", () => {
+		const newComment = {
+			username: 15,
+			someKeyOtherThanBody: 3.2
+		};
+		return request(app)
+			.post("/api/reviews/4/comments")
+			.send(newComment)
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
 });
