@@ -241,4 +241,18 @@ describe("PATCH /api/reviews/:review_id", () => {
 				expect(msg).toBe("Content not found");
 			});
 	});
+
+	test("status:400, returns an appropriate error message when sending a malformed body", () => {
+		const newVotes = {
+			someKeyThatIsntIncVotes: 100
+		};
+		return request(app)
+			.patch("/api/reviews/1")
+			.send(newVotes)
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
 });
