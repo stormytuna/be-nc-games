@@ -41,19 +41,21 @@ exports.updateReviewById = ({ inc_votes: voteIncrement }, reviewId) => {
 		return Promise.resolve();
 	}
 
-	// Check for 404
-	return this.selectReviewById(reviewId)
-		.then(() => {
-			const query = `
+	const query = `
       UPDATE reviews 
       SET votes = votes + $2
       WHERE review_id = $1
       RETURNING *;
     `;
-			const params = [reviewId, voteIncrement];
-			return db.query(query, params);
-		})
-		.then(({ rows: reviews }) => {
-			return reviews[0];
-		});
+	const params = [reviewId, voteIncrement];
+	return db.query(query, params).then(({ rows: reviews }) => {
+		if (reviews.length === 0) {
+			return Promise.reject({
+				status: 404,
+				msg: "Content not found"
+			});
+		}
+
+		return reviews[0];
+	});
 };
