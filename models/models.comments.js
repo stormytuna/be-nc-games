@@ -19,3 +19,16 @@ exports.selectCommentsByReviewId = (reviewId) => {
 		return comments;
 	});
 };
+
+exports.insertCommentByReviewId = (comment, reviewId) => {
+	const query = `
+    INSERT INTO comments (body, author, review_id, votes, created_at)
+    VALUES
+      ($1, $2, $3, 0, $4)
+    RETURNING *;
+  `;
+	const params = [comment.body, comment.username, reviewId, new Date(Date.now())];
+	return db.query(query, params).then(({ rows: comment }) => {
+		return comment[0];
+	});
+};

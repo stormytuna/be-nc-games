@@ -156,3 +156,27 @@ describe("GET /api/reviews/:review_id/comments", () => {
 			});
 	});
 });
+
+describe("POST /api/reviews/:review_id/comments", () => {
+	test("status:201, responds with the newly created comment object", () => {
+		const newComment = {
+			username: "mallionaire",
+			body: "very cool :)"
+		};
+		return request(app)
+			.post("/api/reviews/4/comments")
+			.send(newComment)
+			.expect(201)
+			.then(({ body }) => {
+				const { comment } = body;
+				expect(comment).toMatchObject({
+					comment_id: expect.any(Number),
+					votes: 0,
+					created_at: expect.any(String),
+					author: "mallionaire",
+					body: "very cool :)",
+					review_id: 4
+				});
+			});
+	});
+});
