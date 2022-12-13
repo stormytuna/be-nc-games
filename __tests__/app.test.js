@@ -255,4 +255,18 @@ describe("PATCH /api/reviews/:review_id", () => {
 				expect(msg).toBe("Bad request");
 			});
 	});
+
+	test("status:400, returns an appropriate error message when sent body fails schema validation", () => {
+		const newVotes = {
+			inc_votes: "kitten"
+		};
+		return request(app)
+			.patch("/api/reviews/1")
+			.send(newVotes)
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
 });
