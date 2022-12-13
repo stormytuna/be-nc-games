@@ -7,7 +7,7 @@ exports.selectCommentsByReviewId = (reviewId) => {
 	return selectReviewById(reviewId)
 		.then(() => {
 			const query = `
-        SELECT comments.*, reviews.review_id FROM comments
+        SELECT comments.* FROM comments
         JOIN reviews ON comments.review_id = reviews.review_id
         WHERE reviews.review_id = $1
         ORDER BY comments.created_at DESC;
