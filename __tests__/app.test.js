@@ -214,17 +214,26 @@ describe("PATCH /api/reviews/:review_id", () => {
 			});
 	});
 
-	test("status:204, returns nothing when not told to increment or decrement", () => {
+	test("status:200, returns an unmodified review object when not told to increment or decrement", () => {
 		const newVotes = {
 			inc_votes: 0
 		};
 		return request(app)
 			.patch("/api/reviews/1")
 			.send(newVotes)
-			.expect(204)
+			.expect(200)
 			.then(({ body }) => {
 				const { review } = body;
-				expect(review).toBeUndefined();
+				expect(review).toMatchObject({
+					owner: "mallionaire",
+					title: "Agricola",
+					designer: "Uwe Rosenberg",
+					review_id: 1,
+					category: "euro game",
+					review_img_url: "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+					created_at: "2021-01-18T10:00:20.514Z",
+					votes: 1
+				});
 			});
 	});
 
