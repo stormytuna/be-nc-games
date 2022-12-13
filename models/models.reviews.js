@@ -1,14 +1,52 @@
 const db = require("../db/connection");
 
-exports.selectReviews = () => {
-	const query = `
+const validSortBys = [
+	"owner",
+	"title",
+	"review_id",
+	"category",
+	"review_img_url",
+	"created_at",
+	"votes",
+	"designed",
+	"comment_count"
+];
+const validOrders = ["asc", "desc"];
+
+exports.selectReviews = (category, sortBy, order) => {
+	// Default values
+	sortBy = sortBy || "created_at";
+	order = order || "desc";
+
+	// Validates our sortBy and order
+	if (!validSortBys.includes(sortBy) || !validOrders.includes(order)) {
+		return Promise.reject({
+			status: 400,
+			msg: "Bad request"
+		});
+	}
+
+	// Head of our query
+	const params = [];
+	let query = `
     SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category, review_img_url, reviews.created_at, reviews.votes, reviews.designer, COUNT(comment_id) as comment_count
-    FROM reviews
-    LEFT JOIN comments ON reviews.review_id = comments.review_id
-    GROUP BY reviews.review_id
-    ORDER BY created_at DESC;
-  `;
-	return db.query(query).then(({ rows: reviews }) => {
+      FROM reviews
+      LEFT JOIN comments ON reviews.review_id = comments.review_id
+    `;
+
+	// Conditionally adds filter
+	if (category) {
+		query += `WHERE category = $1 `;
+		params.push(category);
+	}
+
+	// Tail of our query
+	query += `
+      GROUP BY reviews.review_id
+      ORDER BY ${sortBy} ${order};
+    `;
+
+	return db.query(query, params).then(({ rows: reviews }) => {
 		return reviews;
 	});
 };
