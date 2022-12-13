@@ -136,6 +136,16 @@ describe("GET /api/reviews/:review_id/comments", () => {
 			});
 	});
 
+	test("status:200, responds with an empty array when querying a review with no comments", () => {
+		return request(app)
+			.get("/api/reviews/5/comments")
+			.expect(200)
+			.then(({ body }) => {
+				const { comments } = body;
+				expect(comments).toEqual([]);
+			});
+	});
+
 	test("status:404, responds with an appropriate error message when provided review_id doesn't exist", () => {
 		return request(app)
 			.get("/api/reviews/9999/comments")
