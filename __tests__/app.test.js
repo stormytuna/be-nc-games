@@ -195,6 +195,21 @@ describe("POST /api/reviews/:review_id/comments", () => {
 			});
 	});
 
+	test("status:404, responds with an appropriate error message when provided user doesn't exist", () => {
+		const newComment = {
+			username: "totally a real person",
+			body: "very cool :)"
+		};
+		return request(app)
+			.post("/api/reviews/4/comments")
+			.send(newComment)
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
+
 	test("status:400, responds with an appropriate error message when sending a malformed body", () => {
 		const newComment = {
 			username: "mallionaire",
