@@ -179,4 +179,19 @@ describe("POST /api/reviews/:review_id/comments", () => {
 				});
 			});
 	});
+
+	test("status:404, responds with an appropriate error message when provided review_id doesn't exist", () => {
+		const newComment = {
+			username: "mallionaire",
+			body: "very cool :)"
+		};
+		return request(app)
+			.post("/api/reviews/9999/comments")
+			.send(newComment)
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
 });
