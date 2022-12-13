@@ -36,11 +36,6 @@ exports.selectReviewById = (reviewId) => {
 };
 
 exports.updateReviewById = ({ inc_votes: voteIncrement }, reviewId) => {
-	// Check for 204
-	if (voteIncrement === 0) {
-		return Promise.resolve();
-	}
-
 	const query = `
       UPDATE reviews 
       SET votes = votes + $2
