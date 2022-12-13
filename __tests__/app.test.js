@@ -227,4 +227,18 @@ describe("PATCH /api/reviews/:review_id", () => {
 				expect(review).toBeUndefined();
 			});
 	});
+
+	test("status:404, returns an appropriate error message when given review doesn't exist", () => {
+		const newVotes = {
+			inc_votes: 5
+		};
+		return request(app)
+			.patch("/api/reviews/9999")
+			.send(newVotes)
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
 });

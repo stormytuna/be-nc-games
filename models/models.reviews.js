@@ -41,14 +41,19 @@ exports.updateReviewById = (newVotes, reviewId) => {
 		return Promise.resolve();
 	}
 
-	const query = `
-    UPDATE reviews 
-    SET votes = votes + $2
-    WHERE review_id = $1
-    RETURNING *;
-  `;
-	const params = [reviewId, newVotes.inc_votes];
-	return db.query(query, params).then(({ rows: reviews }) => {
-		return reviews[0];
-	});
+	// Check for 404
+	return this.selectReviewById(reviewId)
+		.then(() => {
+			const query = `
+      UPDATE reviews 
+      SET votes = votes + $2
+      WHERE review_id = $1
+      RETURNING *;
+    `;
+			const params = [reviewId, newVotes.inc_votes];
+			return db.query(query, params);
+		})
+		.then(({ rows: reviews }) => {
+			return reviews[0];
+		});
 };
