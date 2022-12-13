@@ -22,12 +22,12 @@ exports.selectCommentsByReviewId = (reviewId) => {
 
 exports.insertCommentByReviewId = (comment, reviewId) => {
 	const query = `
-    INSERT INTO comments (body, author, review_id, votes, created_at)
+    INSERT INTO comments (body, author, review_id)
     VALUES
-      ($1, $2, $3, 0, $4)
+      ($1, $2, $3)
     RETURNING *;
   `;
-	const params = [comment.body, comment.username, reviewId, new Date(Date.now())];
+	const params = [comment.body, comment.username, reviewId];
 	return db.query(query, params).then(({ rows: comment }) => {
 		return comment[0];
 	});
