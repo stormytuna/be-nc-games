@@ -242,6 +242,20 @@ describe("PATCH /api/reviews/:review_id", () => {
 			});
 	});
 
+	test("status:400, returns an appropriate error message when given review id isnt an integer", () => {
+		const newVotes = {
+			inc_votes: 3
+		};
+		return request(app)
+			.patch("/api/reviews/kitten")
+			.send(newVotes)
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+
 	test("status:400, returns an appropriate error message when sending a malformed body", () => {
 		const newVotes = {
 			someKeyThatIsntIncVotes: 100
