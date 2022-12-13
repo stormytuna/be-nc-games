@@ -114,3 +114,55 @@ describe("GET /api/reviews/:review_id", () => {
 			});
 	});
 });
+
+describe("GET /api/reviews/:review_id/comments", () => {
+	test("status:200, responds with an array of comment objects", () => {
+		return request(app)
+			.get("/api/reviews/2/comments")
+			.expect(200)
+			.then(({ body }) => {
+				const { comments } = body;
+				expect(comments).toHaveLength(3);
+				comments.forEach((comment) => {
+					expect(comment).toMatchObject({
+						comment_id: expect.any(Number),
+						votes: expect.any(Number),
+						created_at: expect.any(String),
+						author: expect.any(String),
+						body: expect.any(String),
+						review_id: expect.any(Number)
+					});
+				});
+			});
+	});
+
+	test("status:200, responds with an empty array when querying a review with no comments", () => {
+		return request(app)
+			.get("/api/reviews/5/comments")
+			.expect(200)
+			.then(({ body }) => {
+				const { comments } = body;
+				expect(comments).toEqual([]);
+			});
+	});
+
+	test("status:404, responds with an appropriate error message when provided review_id doesn't exist", () => {
+		return request(app)
+			.get("/api/reviews/9999/comments")
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
+
+	test("status:400, responds with an appropriate error message when provided review_id isn't an integer", () => {
+		return request(app)
+			.get("/api/reviews/totally-a-real-review-id/comments")
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+});
