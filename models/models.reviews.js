@@ -34,3 +34,16 @@ exports.selectReviewById = (reviewId) => {
 		return reviews[0];
 	});
 };
+
+exports.updateReviewById = (newVotes, reviewId) => {
+	const query = `
+    UPDATE reviews 
+    SET votes = votes + $2
+    WHERE review_id = $1
+    RETURNING *;
+  `;
+	const params = [reviewId, newVotes.inc_votes];
+	return db.query(query, params).then(({ rows: reviews }) => {
+		return reviews[0];
+	});
+};
