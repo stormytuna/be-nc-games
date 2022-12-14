@@ -47,6 +47,27 @@ exports.selectReviews = (category, sortBy, order) => {
     `;
 
 	return db.query(query, params).then(({ rows: reviews }) => {
+		if (reviews.length === 0) {
+			return db.query("SELECT * FROM categories").then(({ rows: categories }) => {
+				let givenCategoryIsValid = false;
+
+				categories.forEach((validCategory) => {
+					if (validCategory.slug === category) {
+						givenCategoryIsValid = true;
+					}
+				});
+
+				if (givenCategoryIsValid) {
+					return reviews;
+				} else {
+					return Promise.reject({
+						status: 404,
+						msg: "Content not found"
+					});
+				}
+			});
+		}
+
 		return reviews;
 	});
 };

@@ -178,6 +178,46 @@ describe("GET /api/reviews", () => {
 				});
 			});
 	});
+
+	test("status:400, responds with an appropriate error message when given an incorrect sort_by query", () => {
+		return request(app)
+			.get("/api/reviews?sort_by=this+doesnt+exist")
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+
+	test("status:400, responds with an appropriate error message when given an incorrect order query", () => {
+		return request(app)
+			.get("/api/reviews?order=this+doesnt+exist")
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+
+	test("status:200, responds with an empty array when given a category query that has no reviews", () => {
+		return request(app)
+			.get("/api/reviews?category=children's+games")
+			.expect(200)
+			.then(({ body }) => {
+				const { reviews } = body;
+				expect(reviews).toEqual([]);
+			});
+	});
+
+	test.only("status:404, responds with an appropriate error message when given a category that does not exist", () => {
+		return request(app)
+			.get("/api/reviews?category=this+doesnt+exist")
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
 });
 
 describe("GET /api/reviews/:review_id", () => {
