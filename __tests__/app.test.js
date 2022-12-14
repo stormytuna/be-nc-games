@@ -136,6 +136,16 @@ describe("GET /api/reviews/:review_id/comments", () => {
 			});
 	});
 
+	test("status:200, responds with an empty array when querying a review with no comments", () => {
+		return request(app)
+			.get("/api/reviews/5/comments")
+			.expect(200)
+			.then(({ body }) => {
+				const { comments } = body;
+				expect(comments).toEqual([]);
+			});
+	});
+
 	test("status:404, responds with an appropriate error message when provided review_id doesn't exist", () => {
 		return request(app)
 			.get("/api/reviews/9999/comments")
@@ -177,21 +187,6 @@ describe("POST /api/reviews/:review_id/comments", () => {
 					body: "very cool :)",
 					review_id: 4
 				});
-			});
-	});
-
-	test("status:404, responds with an appropriate error message when provided review_id doesn't exist", () => {
-		const newComment = {
-			username: "mallionaire",
-			body: "very cool :)"
-		};
-		return request(app)
-			.post("/api/reviews/9999/comments")
-			.send(newComment)
-			.expect(404)
-			.then(({ body }) => {
-				const { msg } = body;
-				expect(msg).toBe("Content not found");
 			});
 	});
 
@@ -237,6 +232,167 @@ describe("POST /api/reviews/:review_id/comments", () => {
 			.then(({ body }) => {
 				const { msg } = body;
 				expect(msg).toBe("Bad request");
+			});
+	});
+
+	test("status:404, responds with an appropriate error message when provided review_id doesn't exist", () => {
+		const newComment = {
+			username: "mallionaire",
+			body: "very cool :)"
+		};
+		return request(app)
+			.post("/api/reviews/9999/comments")
+			.send(newComment)
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
+});
+
+describe("PATCH /api/reviews/:review_id", () => {
+	test("status:200, returns the updated review object when told to increment", () => {
+		const newVotes = {
+			inc_votes: 3
+		};
+		return request(app)
+			.patch("/api/reviews/1")
+			.send(newVotes)
+			.expect(200)
+			.then(({ body }) => {
+				const { review } = body;
+				expect(review).toMatchObject({
+					owner: "mallionaire",
+					title: "Agricola",
+					designer: "Uwe Rosenberg",
+					review_id: 1,
+					category: "euro game",
+					review_img_url: "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+					created_at: "2021-01-18T10:00:20.514Z",
+					votes: 4
+				});
+			});
+	});
+
+	test("status:200, returns the updated review object when told to decrement", () => {
+		const newVotes = {
+			inc_votes: -1
+		};
+		return request(app)
+			.patch("/api/reviews/1")
+			.send(newVotes)
+			.expect(200)
+			.then(({ body }) => {
+				const { review } = body;
+				expect(review).toMatchObject({
+					owner: "mallionaire",
+					title: "Agricola",
+					designer: "Uwe Rosenberg",
+					review_id: 1,
+					category: "euro game",
+					review_img_url: "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+					created_at: "2021-01-18T10:00:20.514Z",
+					votes: 0
+				});
+			});
+	});
+
+	test("status:200, returns an unmodified review object when not told to increment or decrement", () => {
+		const newVotes = {
+			inc_votes: 0
+		};
+		return request(app)
+			.patch("/api/reviews/1")
+			.send(newVotes)
+			.expect(200)
+			.then(({ body }) => {
+				const { review } = body;
+				expect(review).toMatchObject({
+					owner: "mallionaire",
+					title: "Agricola",
+					designer: "Uwe Rosenberg",
+					review_id: 1,
+					category: "euro game",
+					review_img_url: "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+					created_at: "2021-01-18T10:00:20.514Z",
+					votes: 1
+				});
+			});
+	});
+
+	test("status:404, returns an appropriate error message when given review doesn't exist", () => {
+		const newVotes = {
+			inc_votes: 5
+		};
+		return request(app)
+			.patch("/api/reviews/9999")
+			.send(newVotes)
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
+
+	test("status:400, returns an appropriate error message when sent body fails schema validation", () => {
+		const newVotes = {
+			inc_votes: "kitten"
+		};
+		return request(app)
+			.patch("/api/reviews/1")
+			.send(newVotes)
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+
+	test("status:400, returns an appropriate error message when given review id isnt an integer", () => {
+		const newVotes = {
+			inc_votes: 3
+		};
+		return request(app)
+			.patch("/api/reviews/kitten")
+			.send(newVotes)
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+
+	test("status:400, returns an appropriate error message when sending a malformed body", () => {
+		const newVotes = {
+			someKeyThatIsntIncVotes: 100
+		};
+		return request(app)
+			.patch("/api/reviews/1")
+			.send(newVotes)
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+});
+
+describe("GET /api/users", () => {
+	test("status:200, responds with an array of user objects", () => {
+		return request(app)
+			.get("/api/users")
+			.expect(200)
+			.then(({ body }) => {
+				const { users } = body;
+				expect(users).toHaveLength(4);
+				users.forEach((user) => {
+					expect(user).toMatchObject({
+						username: expect.any(String),
+						name: expect.any(String),
+						avatar_url: expect.any(String)
+					});
+				});
 			});
 	});
 });
