@@ -167,6 +167,90 @@ describe("GET /api/reviews/:review_id/comments", () => {
 	});
 });
 
+describe("POST /api/reviews/:review_id/comments", () => {
+	test("status:201, responds with the newly created comment object", () => {
+		const newComment = {
+			username: "mallionaire",
+			body: "very cool :)"
+		};
+		return request(app)
+			.post("/api/reviews/4/comments")
+			.send(newComment)
+			.expect(201)
+			.then(({ body }) => {
+				const { comment } = body;
+				expect(comment).toMatchObject({
+					comment_id: expect.any(Number),
+					votes: 0,
+					created_at: expect.any(String),
+					author: "mallionaire",
+					body: "very cool :)",
+					review_id: 4
+				});
+			});
+	});
+
+	test("status:404, responds with an appropriate error message when provided user doesn't exist", () => {
+		const newComment = {
+			username: "totally a real person",
+			body: "very cool :)"
+		};
+		return request(app)
+			.post("/api/reviews/4/comments")
+			.send(newComment)
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
+
+	test("status:400, responds with an appropriate error message when sending a malformed body", () => {
+		const newComment = {
+			username: "mallionaire",
+			someKeyOtherThanBody: "very cool :)"
+		};
+		return request(app)
+			.post("/api/reviews/4/comments")
+			.send(newComment)
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+
+	test("status:400, responds with an appropriate error message when sending a body that fails schema validation", () => {
+		const newComment = {
+			username: 15,
+			someKeyOtherThanBody: 3.2
+		};
+		return request(app)
+			.post("/api/reviews/4/comments")
+			.send(newComment)
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+
+	test("status:404, responds with an appropriate error message when provided review_id doesn't exist", () => {
+		const newComment = {
+			username: "mallionaire",
+			body: "very cool :)"
+		};
+		return request(app)
+			.post("/api/reviews/9999/comments")
+			.send(newComment)
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
+});
+
 describe("PATCH /api/reviews/:review_id", () => {
 	test("status:200, returns the updated review object when told to increment", () => {
 		const newVotes = {
@@ -251,6 +335,20 @@ describe("PATCH /api/reviews/:review_id", () => {
 			});
 	});
 
+	test("status:400, returns an appropriate error message when sent body fails schema validation", () => {
+		const newVotes = {
+			inc_votes: "kitten"
+		};
+		return request(app)
+			.patch("/api/reviews/1")
+			.send(newVotes)
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+
 	test("status:400, returns an appropriate error message when given review id isnt an integer", () => {
 		const newVotes = {
 			inc_votes: 3
@@ -268,20 +366,6 @@ describe("PATCH /api/reviews/:review_id", () => {
 	test("status:400, returns an appropriate error message when sending a malformed body", () => {
 		const newVotes = {
 			someKeyThatIsntIncVotes: 100
-		};
-		return request(app)
-			.patch("/api/reviews/1")
-			.send(newVotes)
-			.expect(400)
-			.then(({ body }) => {
-				const { msg } = body;
-				expect(msg).toBe("Bad request");
-			});
-	});
-
-	test("status:400, returns an appropriate error message when sent body fails schema validation", () => {
-		const newVotes = {
-			inc_votes: "kitten"
 		};
 		return request(app)
 			.patch("/api/reviews/1")
