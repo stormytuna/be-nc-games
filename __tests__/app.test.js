@@ -102,12 +102,13 @@ describe("GET /api/reviews", () => {
 			.then(({ body }) => {
 				const { reviews } = body;
 				expect(reviews).toHaveLength(13);
-				reviews.reduce((pre, cur) => {
-					if (pre && cur) {
-						return pre <= cur;
-					}
-					return true;
-				});
+				expect(reviews).toStrictEqual(
+					reviews.sort((a, b) => {
+						if (a.votes < b.votes) return -1;
+						if (a.votes > b.votes) return 1;
+						return 0;
+					})
+				);
 				reviews.forEach((review) => {
 					expect(review).toMatchObject({
 						owner: expect.any(String),
@@ -131,7 +132,13 @@ describe("GET /api/reviews", () => {
 			.then(({ body }) => {
 				const { reviews } = body;
 				expect(reviews).toHaveLength(13);
-				expect(reviews).toStrictEqual(reviews.sort((a, b) => a.votes - b.votes));
+				expect(reviews).toStrictEqual(
+					reviews.sort((a, b) => {
+						if (a.created_at > b.created_at) return -1;
+						if (a.created_at < b.created_at) return 1;
+						return 0;
+					})
+				);
 				reviews.forEach((review) => {
 					expect(review).toMatchObject({
 						owner: expect.any(String),
