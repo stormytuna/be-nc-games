@@ -71,6 +71,153 @@ describe("GET /api/reviews", () => {
 				});
 			});
 	});
+
+	test("status:200, category query, responds with a filtered reviews array", () => {
+		return request(app)
+			.get("/api/reviews?category=dexterity")
+			.expect(200)
+			.then(({ body }) => {
+				const { reviews } = body;
+				expect(reviews).toHaveLength(1);
+				reviews.forEach((review) => {
+					expect.objectContaining({
+						owner: expect.any(String),
+						title: expect.any(String),
+						designer: expect.any(String),
+						review_id: expect.any(Number),
+						category: "dexterity",
+						review_img_url: expect.any(String),
+						created_at: expect.any(String),
+						votes: expect.any(Number),
+						comment_count: expect.any(String)
+					});
+				});
+			});
+	});
+
+	test("status:200, sort_by query, responds with a sorted reviews array", () => {
+		return request(app)
+			.get("/api/reviews?sort_by=votes")
+			.expect(200)
+			.then(({ body }) => {
+				const { reviews } = body;
+				expect(reviews).toHaveLength(13);
+				expect(reviews).toStrictEqual(
+					reviews.sort((a, b) => {
+						if (a.votes < b.votes) return -1;
+						if (a.votes > b.votes) return 1;
+						return 0;
+					})
+				);
+				reviews.forEach((review) => {
+					expect(review).toMatchObject({
+						owner: expect.any(String),
+						title: expect.any(String),
+						designer: expect.any(String),
+						review_id: expect.any(Number),
+						category: expect.any(String),
+						review_img_url: expect.any(String),
+						created_at: expect.any(String),
+						votes: expect.any(Number),
+						comment_count: expect.any(String)
+					});
+				});
+			});
+	});
+
+	test("status:200, order query, responds with a correctly ordered reviews array", () => {
+		return request(app)
+			.get("/api/reviews?order=asc")
+			.expect(200)
+			.then(({ body }) => {
+				const { reviews } = body;
+				expect(reviews).toHaveLength(13);
+				expect(reviews).toStrictEqual(
+					reviews.sort((a, b) => {
+						if (a.created_at > b.created_at) return -1;
+						if (a.created_at < b.created_at) return 1;
+						return 0;
+					})
+				);
+				reviews.forEach((review) => {
+					expect(review).toMatchObject({
+						owner: expect.any(String),
+						title: expect.any(String),
+						designer: expect.any(String),
+						review_id: expect.any(Number),
+						category: expect.any(String),
+						review_img_url: expect.any(String),
+						created_at: expect.any(String),
+						votes: expect.any(Number),
+						comment_count: expect.any(String)
+					});
+				});
+			});
+	});
+
+	test("status:200, queries work together", () => {
+		return request(app)
+			.get("/api/reviews?category=social+deduction&sort_by=votes&order=asc")
+			.expect(200)
+			.then(({ body }) => {
+				const { reviews } = body;
+				expect(reviews).toHaveLength(11);
+				expect(reviews).toStrictEqual(reviews.sort((a, b) => a.votes - b.votes));
+				reviews.forEach((review) => {
+					expect(review).toMatchObject({
+						owner: expect.any(String),
+						title: expect.any(String),
+						designer: expect.any(String),
+						review_id: expect.any(Number),
+						category: "social deduction",
+						review_img_url: expect.any(String),
+						created_at: expect.any(String),
+						votes: expect.any(Number),
+						comment_count: expect.any(String)
+					});
+				});
+			});
+	});
+
+	test("status:400, responds with an appropriate error message when given an incorrect sort_by query", () => {
+		return request(app)
+			.get("/api/reviews?sort_by=this+doesnt+exist")
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+
+	test("status:400, responds with an appropriate error message when given an incorrect order query", () => {
+		return request(app)
+			.get("/api/reviews?order=this+doesnt+exist")
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+
+	test("status:200, responds with an empty array when given a category query that has no reviews", () => {
+		return request(app)
+			.get("/api/reviews?category=children's+games")
+			.expect(200)
+			.then(({ body }) => {
+				const { reviews } = body;
+				expect(reviews).toEqual([]);
+			});
+	});
+
+	test("status:404, responds with an appropriate error message when given a category that does not exist", () => {
+		return request(app)
+			.get("/api/reviews?category=this+doesnt+exist")
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
 });
 
 describe("GET /api/reviews/:review_id", () => {
