@@ -543,3 +543,14 @@ describe("GET /api/users", () => {
 			});
 	});
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+	test("status:200, responds with an empty body", () => {
+		return request(app)
+			.delete("/api/comments/1")
+			.expect(204)
+			.then(({ body }) => {
+				expect(body).toEqual({});
+			});
+	});
+});
