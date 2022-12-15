@@ -73,7 +73,6 @@ describe("GET /api/reviews", () => {
 	});
 });
 
-// Check these tests
 describe("GET /api/reviews/:review_id", () => {
 	test("status:200, responds with a review object", () => {
 		return request(app)
