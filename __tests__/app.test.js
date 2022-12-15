@@ -209,7 +209,7 @@ describe("GET /api/reviews", () => {
 			});
 	});
 
-	test.only("status:404, responds with an appropriate error message when given a category that does not exist", () => {
+	test("status:404, responds with an appropriate error message when given a category that does not exist", () => {
 		return request(app)
 			.get("/api/reviews?category=this+doesnt+exist")
 			.expect(404)
