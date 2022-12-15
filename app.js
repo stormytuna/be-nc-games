@@ -1,4 +1,5 @@
 const express = require("express");
+const { getEndpoints } = require("./controllers/controllers.api");
 const { getCategories } = require("./controllers/controllers.categories");
 const { getCommentsByReviewId, postCommentByReviewId } = require("./controllers/controllers.comments");
 const { handle404s, handle500s, handleCustomErrors, handlePSQLErrors } = require("./controllers/controllers.errors");
@@ -7,6 +8,8 @@ const { getUsers } = require("./controllers/controllers.users");
 const app = express();
 
 app.use(express.json());
+
+app.get("/api", getEndpoints);
 
 app.get("/api/categories", getCategories);
 
