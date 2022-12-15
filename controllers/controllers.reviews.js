@@ -8,6 +8,7 @@ exports.getReviews = (req, res, next) => {
 		.catch(next);
 };
 
+// Check this controller
 exports.getReviewById = (req, res, next) => {
 	selectReviewById(req.params.review_id)
 		.then((review) => {

@@ -13,6 +13,7 @@ exports.selectReviews = () => {
 	});
 };
 
+// Check this model
 exports.selectReviewById = (reviewId) => {
 	const query = `
     SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category, review_img_url, reviews.created_at, reviews.votes, reviews.designer, COUNT(comment_id) as comment_count
