@@ -230,6 +230,7 @@ describe("GET /api/reviews/:review_id", () => {
 				expect(review).toMatchObject({
 					owner: "philippaclaire9",
 					title: "Jenga",
+					review_body: "Fiddly fun for all the family",
 					designer: "Leslie Scott",
 					review_id: 2,
 					category: "dexterity",
