@@ -695,7 +695,7 @@ describe("PATCH /api/comments/:comment_id", () => {
 	});
 });
 
-describe.only("POST /api/reviews", () => {
+describe("POST /api/reviews", () => {
 	test("status:200, responds with the newly posted review object", () => {
 		const newReview = {
 			owner: "mallionaire",
@@ -742,6 +742,24 @@ describe.only("POST /api/reviews", () => {
 			review_body: "wow, so cool",
 			designer: "idk",
 			category: "dexterity"
+		};
+		return request(app)
+			.post("/api/reviews")
+			.send(newReview)
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
+
+	test("status:404, responds with an appropriate error message when given category does not exist", () => {
+		const newReview = {
+			owner: "mallionaire",
+			title: "amazing title",
+			review_body: "wow, so cool",
+			designer: "idk",
+			category: "totally a real category"
 		};
 		return request(app)
 			.post("/api/reviews")
