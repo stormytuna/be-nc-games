@@ -1,4 +1,4 @@
-const { selectReviews, selectReviewById, updateReviewById } = require("../models/models.reviews");
+const { selectReviews, selectReviewById, updateReviewById, insertReview } = require("../models/models.reviews");
 
 exports.getReviews = (req, res, next) => {
 	const { category, sort_by, order } = req.query;
@@ -25,6 +25,14 @@ exports.patchReviewById = (req, res, next) => {
 			} else {
 				res.status(204).send();
 			}
+		})
+		.catch(next);
+};
+
+exports.postReview = (req, res, next) => {
+	insertReview(req.body, req.params.review_id)
+		.then((review) => {
+			res.status(201).send({ review });
 		})
 		.catch(next);
 };

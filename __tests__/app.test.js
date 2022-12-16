@@ -694,3 +694,32 @@ describe("PATCH /api/comments/:comment_id", () => {
 			});
 	});
 });
+
+describe.only("POST /api/reviews", () => {
+	test("status:200, responds with the newly posted review object", () => {
+		const newReview = {
+			owner: "mallionaire",
+			title: "amazing title",
+			review_body: "wow, so cool",
+			designer: "idk",
+			category: "dexterity"
+		};
+		return request(app)
+			.post("/api/reviews")
+			.send(newReview)
+			.expect(201)
+			.then(({ body }) => {
+				const { review } = body;
+				expect(review).toMatchObject({
+					owner: "mallionaire",
+					title: "amazing title",
+					review_body: "wow, so cool",
+					designer: "idk",
+					category: "dexterity",
+					review_id: expect.any(Number),
+					votes: 0,
+					created_at: expect.any(String)
+				});
+			});
+	});
+});
