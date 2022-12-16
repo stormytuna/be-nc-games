@@ -1,8 +1,5 @@
-const {
-	convertTimestampToDate,
-	createRef,
-	formatComments,
-} = require("../db/seeds/utils");
+const { convertTimestampToDate, createRef, formatComments } = require("../db/seeds/utils");
+const { make404, make400 } = require("../utils");
 
 describe("convertTimestampToDate", () => {
 	test("returns a new object", () => {
@@ -60,7 +57,7 @@ describe("createRef", () => {
 		const input = [
 			{ title: "title1", article_id: 1 },
 			{ title: "title2", article_id: 2 },
-			{ title: "title3", article_id: 3 },
+			{ title: "title3", article_id: 3 }
 		];
 		const actual = createRef(input, "title", "article_id");
 		const expected = { title1: 1, title2: 2, title3: 3 };
@@ -100,5 +97,37 @@ describe("formatComments", () => {
 		const comments = [{ created_at: timestamp }];
 		const formattedComments = formatComments(comments, {});
 		expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
+	});
+});
+
+describe("make404", () => {
+	test("returns a rejected promise with status:404 and msg:'Content not found'", (done) => {
+		make404().catch((error) => {
+			expect(error).toEqual({ status: 404, msg: "Content not found" });
+			done();
+		});
+	});
+
+	test("returns a rejected promise with custom info added", (done) => {
+		make404("some info about the error").catch((error) => {
+			expect(error).toEqual({ status: 404, msg: "Content not found", moreInfo: "some info about the error" });
+			done();
+		});
+	});
+});
+
+describe("make400", () => {
+	test("returns a rejected promise with status:400 and msg:'Content not found'", (done) => {
+		make400().catch((error) => {
+			expect(error).toEqual({ status: 400, msg: "Bad request" });
+			done();
+		});
+	});
+
+	test("returns a rejected promise with custom info added", (done) => {
+		make400("some info about the error").catch((error) => {
+			expect(error).toEqual({ status: 400, msg: "Bad request", moreInfo: "some info about the error" });
+			done();
+		});
 	});
 });
