@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { make400, make404 } = require("../utils");
 
 exports.selectReviews = (category, sortBy, order) => {
 	const validSortBys = [
@@ -18,10 +19,7 @@ exports.selectReviews = (category, sortBy, order) => {
 	order = order || "desc";
 
 	if (!validSortBys.includes(sortBy) || !validOrders.includes(order)) {
-		return Promise.reject({
-			status: 400,
-			msg: "Bad request"
-		});
+		return make400();
 	}
 
 	const params = [];
@@ -55,10 +53,7 @@ exports.selectReviews = (category, sortBy, order) => {
 				if (givenCategoryIsValid) {
 					return reviews;
 				} else {
-					return Promise.reject({
-						status: 404,
-						msg: "Content not found"
-					});
+					return make404();
 				}
 			});
 		}
@@ -79,10 +74,7 @@ exports.selectReviewById = (reviewId) => {
 	const params = [reviewId];
 	return db.query(query, params).then(({ rows: reviews }) => {
 		if (reviews.length === 0) {
-			return Promise.reject({
-				status: 404,
-				msg: "Content not found"
-			});
+			return make404(`Review with id ${reviewId} does not exist`);
 		}
 
 		return reviews[0];
@@ -99,10 +91,7 @@ exports.updateReviewById = ({ inc_votes: voteIncrement }, reviewId) => {
 	const params = [reviewId, voteIncrement];
 	return db.query(query, params).then(({ rows: reviews }) => {
 		if (reviews.length === 0) {
-			return Promise.reject({
-				status: 404,
-				msg: "Content not found"
-			});
+			return make404(`Review with id ${reviewId} does not exist`);
 		}
 
 		return reviews[0];
