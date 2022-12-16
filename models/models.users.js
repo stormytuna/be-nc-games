@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { make404 } = require("../utils");
 
 exports.selectUsers = () => {
 	const query = `
@@ -17,10 +18,7 @@ exports.selectUserByUsername = (username) => {
 	const params = [username];
 	return db.query(query, params).then(({ rows: users }) => {
 		if (users.length === 0) {
-			return Promise.reject({
-				status: 404,
-				msg: "Content not found"
-			});
+			return make404(`User with username ${username} does not exist`);
 		}
 
 		return users[0];

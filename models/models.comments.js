@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { make404 } = require("../utils");
 const { selectReviewById } = require("./models.reviews");
 
 exports.selectCommentsByReviewId = (reviewId) => {
@@ -42,10 +43,7 @@ exports.deleteComment = (commentId) => {
 	const params = [commentId];
 	return db.query(query, params).then(({ rows: deleted }) => {
 		if (deleted.length === 0) {
-			return Promise.reject({
-				status: 404,
-				msg: "Content not found"
-			});
+			return make404(`Comment with id ${commentId} does not exist`);
 		}
 
 		return Promise.resolve();
@@ -62,10 +60,7 @@ exports.updateComentById = ({ inc_votes: newVotes }, commentId) => {
 	const params = [commentId, newVotes];
 	return db.query(query, params).then(({ rows: comments }) => {
 		if (comments.length === 0) {
-			return Promise.reject({
-				status: 404,
-				msg: "Content not found"
-			});
+			return make404(`Comment with id ${commentId} does not exist`);
 		}
 
 		return comments[0];
