@@ -32,3 +32,22 @@ exports.insertCommentByReviewId = (comment, reviewId) => {
 		return comment[0];
 	});
 };
+
+exports.deleteComment = (commentId) => {
+	const query = `
+    DELETE FROM comments
+    WHERE comment_id = $1
+    RETURNING *;
+  `;
+	const params = [commentId];
+	return db.query(query, params).then(({ rows: deleted }) => {
+		if (deleted.length === 0) {
+			return Promise.reject({
+				status: 404,
+				msg: "Content not found"
+			});
+		}
+
+		return Promise.resolve();
+	});
+};

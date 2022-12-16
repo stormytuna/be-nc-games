@@ -1,12 +1,19 @@
 const express = require("express");
+const { getEndpoints } = require("./controllers/controllers.api");
 const { getCategories } = require("./controllers/controllers.categories");
-const { getCommentsByReviewId, postCommentByReviewId } = require("./controllers/controllers.comments");
+const {
+	getCommentsByReviewId,
+	postCommentByReviewId,
+	deleteCommentById
+} = require("./controllers/controllers.comments");
 const { handle404s, handle500s, handleCustomErrors, handlePSQLErrors } = require("./controllers/controllers.errors");
 const { getReviews, getReviewById, patchReviewById } = require("./controllers/controllers.reviews");
 const { getUsers } = require("./controllers/controllers.users");
 const app = express();
 
 app.use(express.json());
+
+app.get("/api", getEndpoints);
 
 app.get("/api/categories", getCategories);
 
@@ -16,6 +23,7 @@ app.patch("/api/reviews/:review_id", patchReviewById);
 
 app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
 app.post("/api/reviews/:review_id/comments", postCommentByReviewId);
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.get("/api/users", getUsers);
 

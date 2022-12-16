@@ -1,34 +1,112 @@
 {
-  "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
-  },
-  "GET /api/categories": {
-    "description": "serves an array of all categories",
-    "queries": [],
-    "exampleResponse": {
-      "categories": [
-        {
-          "description": "Players attempt to uncover each other's hidden role",
-          "slug": "Social deduction"
-        }
-      ]
-    }
-  },
-  "GET /api/reviews": {
-    "description": "serves an array of all reviews",
-    "queries": ["category", "sort_by", "order"],
-    "exampleResponse": {
-      "reviews": [
-        {
-          "title": "One Night Ultimate Werewolf",
-          "designer": "Akihisa Okui",
-          "owner": "happyamy2016",
-          "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-          "category": "hidden-roles",
-          "created_at": 1610964101251,
-          "votes": 5
-        }
-      ]
-    }
-  }
+	"GET /api": {
+		"description": "serves up a json representation of all the available endpoints of the api"
+	},
+	"GET /api/categories": {
+		"description": "serves an array of all categories",
+		"queries": [],
+		"exampleResponse": {
+			"categories": [
+				{
+					"description": "Players attempt to uncover each other's hidden role",
+					"slug": "Social deduction"
+				}
+			]
+		}
+	},
+	"GET /api/reviews": {
+		"description": "serves an array of all reviews",
+		"queries": ["category", "sort_by", "order"],
+		"exampleResponse": {
+			"reviews": [
+				{
+					"title": "One Night Ultimate Werewolf",
+					"designer": "Akihisa Okui",
+					"owner": "happyamy2016",
+					"review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+					"category": "hidden-roles",
+					"created_at": 1610964101251,
+					"votes": 5
+				}
+			]
+		}
+	},
+	"GET /api/reviews/:review_id": {
+		"description": "serves the review with the given review id",
+		"queries": [],
+		"exampleResponse": {
+			"review": {
+				"title": "One Night Ultimate Werewolf",
+				"designer": "Akihisa Okui",
+				"owner": "happyamy2016",
+				"review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+				"category": "hidden-roles",
+				"created_at": 1610964101251,
+				"votes": 5
+			}
+		}
+	},
+	"GET /api/reviews/:review_id/comments": {
+		"description": "serves the comments on the review with the given review id",
+		"queries": [],
+		"exampleResponse": {
+			"comments": [
+				{
+					"body": "My dog loves this game too!",
+					"votes": 13,
+					"author": "maillionaire",
+					"review_id": 3,
+					"created_at": "1610964545410"
+				}
+			]
+		}
+	},
+	"GET /api/users": {
+		"description": "serves an array of all users",
+		"queries": [],
+		"exampleResponse": {
+			"users": [
+				{
+					"username": "maillionaire",
+					"name": "haz",
+					"avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+				}
+			]
+		}
+	},
+	"POST /api/reviews/:review_id/comments": {
+		"description": "adds a comment to the review with the given review id and serves the newly added comment",
+		"queries": [],
+		"exampleRequest": {
+			"body": "My cat loves this game too!",
+			"username": "maillionaire"
+		},
+		"exampleResponse": {
+			"comment": {
+				"body": "My cat loves this game too!",
+				"votes": 0,
+				"author": "maillionaire",
+				"review_id": 3,
+				"created_at": "1610964545410"
+			}
+		}
+	},
+	"PATCH /api/reviews/:review_id": {
+		"description": "increments the votes on the review with the given review id and serves the newly updated review",
+		"queries": [],
+		"exampleRequest": {
+			"inc_votes": 1
+		},
+		"exampleResponse": {
+			"review": {
+				"title": "One Night Ultimate Werewolf",
+				"designer": "Akihisa Okui",
+				"owner": "happyamy2016",
+				"review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+				"category": "hidden-roles",
+				"created_at": 1610964101251,
+				"votes": 6
+			}
+		}
+	}
 }
