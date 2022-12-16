@@ -590,4 +590,14 @@ describe("GET /api/users/:username", () => {
 				});
 			});
 	});
+
+	test("status:404, responds with an appropriate error message when given username doesn't exist", () => {
+		return request(app)
+			.get("/api/users/totally-a-real-user")
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
 });
