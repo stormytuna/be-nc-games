@@ -722,4 +722,15 @@ describe.only("POST /api/reviews", () => {
 				});
 			});
 	});
+
+	test("status:400, responds with an appropriate error message when given review has a malformed body", () => {
+		const newReview = {};
+		return request(app)
+			.post("/api/reviews")
+			.send(newReview)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
 });
