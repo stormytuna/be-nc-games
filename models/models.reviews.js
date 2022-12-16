@@ -93,3 +93,16 @@ exports.updateReviewById = ({ inc_votes: voteIncrement }, reviewId) => {
 		return reviews[0];
 	});
 };
+
+exports.insertReview = (review) => {
+	const query = `
+    INSERT INTO reviews (owner, title, review_body, designer, category)
+    VALUES
+      ($1, $2, $3, $4, $5)
+    RETURNING *;`;
+	const { owner, title, review_body, designer, category } = review;
+	const params = [owner, title, review_body, designer, category];
+	return db.query(query, params).then(({ rows: reviews }) => {
+		return reviews[0];
+	});
+};

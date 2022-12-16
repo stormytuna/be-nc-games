@@ -694,3 +694,80 @@ describe("PATCH /api/comments/:comment_id", () => {
 			});
 	});
 });
+
+describe("POST /api/reviews", () => {
+	test("status:200, responds with the newly posted review object", () => {
+		const newReview = {
+			owner: "mallionaire",
+			title: "amazing title",
+			review_body: "wow, so cool",
+			designer: "idk",
+			category: "dexterity"
+		};
+		return request(app)
+			.post("/api/reviews")
+			.send(newReview)
+			.expect(201)
+			.then(({ body }) => {
+				const { review } = body;
+				expect(review).toMatchObject({
+					owner: "mallionaire",
+					title: "amazing title",
+					review_body: "wow, so cool",
+					designer: "idk",
+					category: "dexterity",
+					review_id: expect.any(Number),
+					votes: 0,
+					created_at: expect.any(String)
+				});
+			});
+	});
+
+	test("status:400, responds with an appropriate error message when given review has a malformed body", () => {
+		const newReview = {};
+		return request(app)
+			.post("/api/reviews")
+			.send(newReview)
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+
+	test("status:404, responds with an appropriate error message when given owner does not exist", () => {
+		const newReview = {
+			owner: "totally a real person",
+			title: "amazing title",
+			review_body: "wow, so cool",
+			designer: "idk",
+			category: "dexterity"
+		};
+		return request(app)
+			.post("/api/reviews")
+			.send(newReview)
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
+
+	test("status:404, responds with an appropriate error message when given category does not exist", () => {
+		const newReview = {
+			owner: "mallionaire",
+			title: "amazing title",
+			review_body: "wow, so cool",
+			designer: "idk",
+			category: "totally a real category"
+		};
+		return request(app)
+			.post("/api/reviews")
+			.send(newReview)
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
+});
