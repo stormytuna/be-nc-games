@@ -102,6 +102,27 @@
 			}
 		}
 	},
+	"POST /api/reviews": {
+		"description": "adds a review and serves the newly added review",
+		"queries": [],
+		"exampleRequest": {
+			"owner": "mallionaire",
+			"title": "amazing title",
+			"review_body": "wow, so cool",
+			"designer": "idk",
+			"category": "totally a real category"
+		},
+		"exampleResponse": {
+			"owner": "mallionaire",
+			"title": "amazing title",
+			"review_body": "wow, so cool",
+			"designer": "idk",
+			"category": "totally a real category",
+			"review_id": 15,
+			"votes": 0,
+			"created at": "2021-01-18T10:00:20.514Z"
+		}
+	},
 	"PATCH /api/reviews/:review_id": {
 		"description": "increments the votes on the review with the given review id and serves the newly updated review",
 		"queries": [],
