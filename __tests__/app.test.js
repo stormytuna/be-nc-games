@@ -544,3 +544,34 @@ describe("GET /api/users", () => {
 			});
 	});
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+	test("status:200, responds with an empty body", () => {
+		return request(app)
+			.delete("/api/comments/1")
+			.expect(204)
+			.then(({ body }) => {
+				expect(body).toEqual({});
+			});
+	});
+
+	test("status:404, responds with an appropriate message when the given comment id doesnt exist", () => {
+		return request(app)
+			.delete("/api/comments/9999")
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
+
+	test("status:400, responds with an appropriate message when the given comment id isnt an integer", () => {
+		return request(app)
+			.delete("/api/comments/totally-a-real-comment-id")
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+});
