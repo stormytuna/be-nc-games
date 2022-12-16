@@ -601,3 +601,96 @@ describe("GET /api/users/:username", () => {
 			});
 	});
 });
+
+describe("PATCH /api/comments/:comment_id", () => {
+	test("status:200, responds with an updated comment object when incrementing votes", () => {
+		const newVotes = {
+			inc_votes: 1
+		};
+		return request(app)
+			.patch("/api/comments/1")
+			.send(newVotes)
+			.expect(200)
+			.then(({ body }) => {
+				const { comment } = body;
+				expect(comment).toMatchObject({
+					comment_id: 1,
+					body: "I loved this game too!",
+					review_id: 2,
+					author: "bainesface",
+					votes: 17,
+					created_at: "2017-11-22T12:43:33.389Z"
+				});
+			});
+	});
+
+	test("status:200, responds with an updated comment object when decrementing votes", () => {
+		const newVotes = {
+			inc_votes: -1
+		};
+		return request(app)
+			.patch("/api/comments/1")
+			.send(newVotes)
+			.expect(200)
+			.then(({ body }) => {
+				const { comment } = body;
+				expect(comment).toMatchObject({
+					comment_id: 1,
+					body: "I loved this game too!",
+					review_id: 2,
+					author: "bainesface",
+					votes: 15,
+					created_at: "2017-11-22T12:43:33.389Z"
+				});
+			});
+	});
+
+	test("status:200, responds with an unmodified comment object when given inc_votes = 0", () => {
+		const newVotes = {
+			inc_votes: 0
+		};
+		return request(app)
+			.patch("/api/comments/1")
+			.send(newVotes)
+			.expect(200)
+			.then(({ body }) => {
+				const { comment } = body;
+				expect(comment).toMatchObject({
+					comment_id: 1,
+					body: "I loved this game too!",
+					review_id: 2,
+					author: "bainesface",
+					votes: 16,
+					created_at: "2017-11-22T12:43:33.389Z"
+				});
+			});
+	});
+
+	test("status:404, responds with an appropriate error message when the given comment doesnt exist", () => {
+		const newVotes = {
+			inc_votes: 0
+		};
+		return request(app)
+			.patch("/api/comments/9999")
+			.send(newVotes)
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
+
+	test("status:400, responds with an appropriate error message when given comment id is not an integer", () => {
+		const newVotes = {
+			inc_votes: 0
+		};
+		return request(app)
+			.patch("/api/comments/not-a-number-smiley-face")
+			.send(newVotes)
+			.expect(400)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Bad request");
+			});
+	});
+});
