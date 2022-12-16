@@ -728,9 +728,28 @@ describe.only("POST /api/reviews", () => {
 		return request(app)
 			.post("/api/reviews")
 			.send(newReview)
+			.expect(400)
 			.then(({ body }) => {
 				const { msg } = body;
 				expect(msg).toBe("Bad request");
+			});
+	});
+
+	test("status:404, responds with an appropriate error message when given owner does not exist", () => {
+		const newReview = {
+			owner: "totally a real person",
+			title: "amazing title",
+			review_body: "wow, so cool",
+			designer: "idk",
+			category: "dexterity"
+		};
+		return request(app)
+			.post("/api/reviews")
+			.send(newReview)
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
 			});
 	});
 });
