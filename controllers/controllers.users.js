@@ -1,4 +1,4 @@
-const { selectUsers } = require("../models/controllers.users");
+const { selectUsers } = require("../models/models.users");
 
 exports.getUsers = (req, res, next) => {
 	selectUsers().then((users) => {
