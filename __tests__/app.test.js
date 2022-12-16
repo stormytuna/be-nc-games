@@ -575,3 +575,29 @@ describe("DELETE /api/comments/:comment_id", () => {
 			});
 	});
 });
+
+describe("GET /api/users/:username", () => {
+	test("status:200, responds with a user object", () => {
+		return request(app)
+			.get("/api/users/mallionaire")
+			.expect(200)
+			.then(({ body }) => {
+				const { user } = body;
+				expect(user).toMatchObject({
+					username: "mallionaire",
+					name: "haz",
+					avatar_url: "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+				});
+			});
+	});
+
+	test("status:404, responds with an appropriate error message when given username doesn't exist", () => {
+		return request(app)
+			.get("/api/users/totally-a-real-user")
+			.expect(404)
+			.then(({ body }) => {
+				const { msg } = body;
+				expect(msg).toBe("Content not found");
+			});
+	});
+});
