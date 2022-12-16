@@ -2,9 +2,7 @@ const db = require("../db/connection");
 const { make404 } = require("../utils");
 
 exports.selectUsers = () => {
-	const query = `
-    SELECT username, name, avatar_url FROM users
-  `;
+	const query = `SELECT username, name, avatar_url FROM users;`;
 	return db.query(query).then(({ rows: users }) => {
 		return users;
 	});
@@ -13,8 +11,7 @@ exports.selectUsers = () => {
 exports.selectUserByUsername = (username) => {
 	const query = `
     SELECT username, name, avatar_url FROM users
-    WHERE username = $1;
-  `;
+    WHERE username = $1;`;
 	const params = [username];
 	return db.query(query, params).then(({ rows: users }) => {
 		if (users.length === 0) {

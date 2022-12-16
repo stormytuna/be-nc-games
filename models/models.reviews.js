@@ -25,9 +25,8 @@ exports.selectReviews = (category, sortBy, order) => {
 	const params = [];
 	let query = `
     SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category, review_img_url, reviews.created_at, reviews.votes, reviews.designer, COUNT(comment_id) as comment_count
-      FROM reviews
-      LEFT JOIN comments ON reviews.review_id = comments.review_id
-    `;
+    FROM reviews
+    LEFT JOIN comments ON reviews.review_id = comments.review_id `;
 
 	if (category) {
 		query += `WHERE category = $1 `;
@@ -35,9 +34,8 @@ exports.selectReviews = (category, sortBy, order) => {
 	}
 
 	query += `
-      GROUP BY reviews.review_id
-      ORDER BY ${sortBy} ${order};
-    `;
+    GROUP BY reviews.review_id
+    ORDER BY ${sortBy} ${order};`;
 
 	return db.query(query, params).then(({ rows: reviews }) => {
 		if (reviews.length === 0) {
@@ -69,8 +67,7 @@ exports.selectReviewById = (reviewId) => {
     LEFT JOIN comments ON reviews.review_id = comments.review_id
     WHERE reviews.review_id = $1
     GROUP BY reviews.review_id
-    ORDER BY created_at DESC;
-  `;
+    ORDER BY created_at DESC;`;
 	const params = [reviewId];
 	return db.query(query, params).then(({ rows: reviews }) => {
 		if (reviews.length === 0) {
@@ -83,11 +80,10 @@ exports.selectReviewById = (reviewId) => {
 
 exports.updateReviewById = ({ inc_votes: voteIncrement }, reviewId) => {
 	const query = `
-      UPDATE reviews 
-      SET votes = votes + $2
-      WHERE review_id = $1
-      RETURNING *;
-    `;
+    UPDATE reviews 
+    SET votes = votes + $2
+    WHERE review_id = $1
+    RETURNING *;`;
 	const params = [reviewId, voteIncrement];
 	return db.query(query, params).then(({ rows: reviews }) => {
 		if (reviews.length === 0) {
